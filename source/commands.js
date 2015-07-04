@@ -38,6 +38,11 @@ var commands = {
 		return commands.eval( arg, cb );
 	},
 
+  es6: function ( msg, cb ) {
+    var arg = bot.Message( '6> ' + msg, msg.get() );
+    return commands.eval( arg, cb );
+  },
+
 	refresh : function() {
 		window.location.reload();
 	},
@@ -240,18 +245,16 @@ commands.tell = function ( args ) {
 };
 
 var descriptions = {
-	eval : 'Forwards message to javascript code-eval',
-	coffee : 'Forwards message to coffeescript code-eval',
-	forget : 'Forgets a given command. `/forget cmdName`',
-	help : 'Fetches documentation for given command, or general help article.' +
-		' `/help [cmdName]`',
-	info : 'Grabs some stats on my current instance or a command.' +
-		' `/info [cmdName]`',
+	eval         : 'Forwards message to javascript code-eval',
+	coffee       : 'Forwards message to coffeescript code-eval',
+  es6          : 'Forwards messages to babel code-eval',
+	forget       : 'Forgets a given command. `/forget cmdName`',
+	help         : 'Fetches documentation for given command, or general help article.' +' `/help [cmdName]`',
+	info         : 'Grabs some stats on my current instance or a command.' + ' `/info [cmdName]`',
 	listcommands : 'Lists commands. `/listcommands`',
-	listen : 'Forwards the message to my ears (as if called without the /)',
-	refresh : 'Reloads the browser window I live in',
-	tell : 'Redirect command result to user/message.' +
-		' /tell `msg_id|usr_name cmdName [cmdArgs]`'
+	listen       : 'Forwards the message to my ears (as if called without the /)',
+	refresh      : 'Reloads the browser window I live in',
+	tell         : 'Redirect command result to user/message.' + ' /tell `msg_id|usr_name cmdName [cmdArgs]`'
 };
 
 //only allow owners to use certain commands

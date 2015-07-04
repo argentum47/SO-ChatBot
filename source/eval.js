@@ -7,6 +7,13 @@ setTimeout(function () {
 	IO.injectScript( 'https://rawgithub.com/jashkenas/coffee-script/master/extras/coffee-script.js' );
 }, 1000);
 
+setTimeout( function () {
+	if( bot.devMode ) {
+		return;
+	}
+	IO.injectScript( 'https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js' );
+}, 1000);
+
 //execute arbitrary js code in a relatively safe environment
 bot.eval = (function () {
 
@@ -77,13 +84,22 @@ return function ( code, arg, cb ) {
 }());
 
 bot.prettyEval = function ( code, arg, cb ) {
+	var Transpilers = {
+		c: function ( code ) {
+			return CoffeeScript.compile( code.replace(/^c>/, '' ), { bare: 1} )
+		},
+		b: function ( code ) {
+			return babel.compile( code.replace(/^b>/, '') ).code
+		}
+	};
+	
 	if ( arguments.length === 2 ) {
 		cb  = arg;
 		arg = null;
 	}
 
-	if ( code[0] === 'c' ) {
-		code = CoffeeScript.compile( code.replace(/^c>/, ''), {bare:1} );
+	if ( Transpilers[code[0]] ) {
+		code = Transpilers[code[0]]( code );
 	}
 	else {
 		code = code.replace( /^>/, '' );

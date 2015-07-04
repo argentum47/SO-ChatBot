@@ -755,6 +755,9 @@ var bot = window.bot = {
 			if ( /^c?>/.test(msg) ) {
 				this.prettyEval( msg.toString(), msg.directreply.bind(msg) );
 			}
+      else if ( /^b?>/.test( msg ) ) {
+        this.prettyEval( msg.toString(), msg.directreply.bind( msg) );
+      }
 			//or maybe some other action.
 			else {
 				this.invokeAction( msg );
@@ -1265,6 +1268,13 @@ setTimeout(function () {
 	IO.injectScript( 'https://rawgithub.com/jashkenas/coffee-script/master/extras/coffee-script.js' );
 }, 1000);
 
+setTimeout( function () {
+  if( bot.devMode ) {
+    return;
+  }
+  IO.injectScript( 'https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js' );
+}, 1000);
+
 //execute arbitrary js code in a relatively safe environment
 bot.eval = (function () {
 
@@ -1555,17 +1565,26 @@ return function ( code, arg, cb ) {
 }());
 
 bot.prettyEval = function ( code, arg, cb ) {
+  var Transpilers = {
+    c: function ( code ) {
+      return CoffeeScript.compile( code.replace(/^c>/, '' ), { bare: 1} )
+    },
+    b: function ( code ) {
+      return babel.transform( code.replace(/^b>/, '') ).code;
+    }
+  };
+
 	if ( arguments.length === 2 ) {
 		cb  = arg;
 		arg = null;
 	}
 
-	if ( code[0] === 'c' ) {
-		code = CoffeeScript.compile( code.replace(/^c>/, ''), {bare:1} );
-	}
-	else {
-		code = code.replace( /^>/, '' );
-	}
+  if ( Transpilers[code[0]] ) {
+    code = Transpilers[code[0]]( code );
+  }
+  else {
+    code = code.replace( /)}^>/, '' );
+  }
 
 	return bot.eval( code, arg, finish );
 
@@ -2028,6 +2047,11 @@ var commands = {
 		return commands.eval( arg, cb );
 	},
 
+  es6: function ( msg, cb ) {
+    var arg = bot.Message( 'b> ' + msg, msg.get() );
+    return commands.eval( arg, cb );
+  },
+
 	refresh : function() {
 		window.location.reload();
 	},
@@ -2230,18 +2254,16 @@ commands.tell = function ( args ) {
 };
 
 var descriptions = {
-	eval : 'Forwards message to javascript code-eval',
-	coffee : 'Forwards message to coffeescript code-eval',
-	forget : 'Forgets a given command. `/forget cmdName`',
-	help : 'Fetches documentation for given command, or general help article.' +
-		' `/help [cmdName]`',
-	info : 'Grabs some stats on my current instance or a command.' +
-		' `/info [cmdName]`',
+	eval         : 'Forwards message to javascript code-eval',
+	coffee       : 'Forwards message to coffeescript code-eval',
+  es6          : 'Forwards messages to babel code-eval',
+	forget       : 'Forgets a given command. `/forget cmdName`',
+	help         : 'Fetches documentation for given command, or general help article.' +' `/help [cmdName]`',
+	info         : 'Grabs some stats on my current instance or a command.' + ' `/info [cmdName]`',
 	listcommands : 'Lists commands. `/listcommands`',
-	listen : 'Forwards the message to my ears (as if called without the /)',
-	refresh : 'Reloads the browser window I live in',
-	tell : 'Redirect command result to user/message.' +
-		' /tell `msg_id|usr_name cmdName [cmdArgs]`'
+	listen       : 'Forwards the message to my ears (as if called without the /)',
+	refresh      : 'Reloads the browser window I live in',
+	tell         : 'Redirect command result to user/message.' + ' /tell `msg_id|usr_name cmdName [cmdArgs]`'
 };
 
 //only allow owners to use certain commands
@@ -3404,8 +3426,6 @@ IO.register( 'input', function afkInputListener ( msgObj ) {
 })();
 
 ;
-
-;
 (function () {
 "use strict";
 
@@ -4497,10 +4517,6 @@ bot.addCommand({
 }());
 
 ;
-
-;
-
-;
 //listener to help decide which Firefly episode to watch
 
 bot.listen( /(which |what |give me a )?firefly( episode)?/i, function ( msg ) {
@@ -4799,8 +4815,6 @@ bot.addCommand({
 }());
 
 ;
-
-;
 (function () {
 var baseURL = 'http://api.jquery.com/';
 
@@ -4882,8 +4896,6 @@ bot.addCommand({
 });
 
 })();
-
-;
 
 ;
 (function () {
@@ -5183,8 +5195,6 @@ bot.addCommand({
 })();
 
 ;
-
-;
 (function () {
 // #151: Listen for meme image names and reply with that meme.
 
@@ -5351,8 +5361,6 @@ bot.addCommand( moustache );
 }());
 
 ;
-
-;
 (function () {
 
 //collection of nudges; msgObj, time left and the message itself
@@ -5478,8 +5486,6 @@ function nudgeListener ( args ) {
 }
 
 }());
-
-;
 
 ;
 (function () {
@@ -6236,7 +6242,8 @@ function createLecture ( content ) {
 
 	var lecture = (
 		'Please don\'t post unformatted code - ' +
-		'hit Ctrl+K before sending, and see the {0}.'
+		'hit Ctrl+K before sending, use up-arrow to edit messages, ' +
+		'and see the {0}.'
 	).supplant( bot.adapter.link('faq', '/faq') );
 
 	if ( lineCount >= 10 ) {
@@ -6258,8 +6265,6 @@ function hasUnformattedCode ( text ) {
 }
 
 })();
-
-;
 
 ;
 (function () {
@@ -6481,8 +6486,6 @@ bot.addCommand({
 });
 
 })();
-
-;
 
 ;
 bot.addCommand({

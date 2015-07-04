@@ -38,7 +38,7 @@ var commands = {
 		return commands.eval( arg, cb );
 	},
 
-  es6: function ( msg, cb ) {
+  babel: function ( msg, cb ) {
     var arg = bot.Message( 'b> ' + msg, msg.get() );
     return commands.eval( arg, cb );
   },
@@ -247,7 +247,7 @@ commands.tell = function ( args ) {
 var descriptions = {
 	eval         : 'Forwards message to javascript code-eval',
 	coffee       : 'Forwards message to coffeescript code-eval',
-  es6          : 'Forwards messages to babel code-eval',
+	babel				 : 'Forwards messages to babel code-eval',
 	forget       : 'Forgets a given command. `/forget cmdName`',
 	help         : 'Fetches documentation for given command, or general help article.' +' `/help [cmdName]`',
 	info         : 'Grabs some stats on my current instance or a command.' + ' `/info [cmdName]`',

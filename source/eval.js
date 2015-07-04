@@ -89,7 +89,7 @@ bot.prettyEval = function ( code, arg, cb ) {
       return CoffeeScript.compile( code.replace(/^c>/, '' ), { bare: 1} )
     },
     b: function ( code ) {
-      return babel.compile( code.replace(/^b>/, '') ).code
+      return babel.transform( code.replace(/^b>/, '') ).code;
     }
   };
 
@@ -102,7 +102,7 @@ bot.prettyEval = function ( code, arg, cb ) {
     code = Transpilers[code[0]]( code );
   }
   else {
-    code = code.replace( /^>/, '' );
+    code = code.replace( /)}^>/, '' );
   }
 
 	return bot.eval( code, arg, finish );

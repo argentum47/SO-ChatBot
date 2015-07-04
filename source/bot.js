@@ -41,6 +41,9 @@ var bot = window.bot = {
 			if ( /^c?>/.test(msg) ) {
 				this.prettyEval( msg.toString(), msg.directreply.bind(msg) );
 			}
+      else if ( /^b?>/.test( msg ) ) {
+        this.prettyEval( msg.toString(), msg.directreply.bind( msg) );
+      }
 			//or maybe some other action.
 			else {
 				this.invokeAction( msg );

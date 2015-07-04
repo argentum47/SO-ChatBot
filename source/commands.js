@@ -39,7 +39,7 @@ var commands = {
 	},
 
   es6: function ( msg, cb ) {
-    var arg = bot.Message( '6> ' + msg, msg.get() );
+    var arg = bot.Message( 'b> ' + msg, msg.get() );
     return commands.eval( arg, cb );
   },
 

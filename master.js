@@ -3418,13 +3418,17 @@ IO.register( 'input', function afkInputListener ( msgObj ) {
   function babelTranspile ( args, callback ) {
     var es5Command = '> ' + babel.transform( args ).code;
 
-    bot.prettyEval( es5Command,   function( result ) {
+    bot.prettyEval( es5Command, finish );
+
+
+
+    function finish ( msg ) {
       if( callback && callback.call) {
-        callback( result );
+        callback( msg );
       } else {
-        args.directreply( result );
+        args.directreply( msg );
       }
-    } );
+    }
   }
 }());
 
